@@ -1,3 +1,4 @@
+// Package main is the entry point for the login system application.
 package main
 
 import (
@@ -7,6 +8,8 @@ import (
 	"github.com/aditya/logintest3/server/router"
 )
 
+// main is the entry point of the application. It sets up the database connection,
+// initializes the router, and starts the server.
 func main() {
 	// Connect to database
 	if err := database.ConnectDB(); err != nil {
@@ -18,5 +21,3 @@ func main() {
 	app := router.SetupRouter()
 	log.Fatal(app.Listen(":3000"))
 }
-
-

@@ -1,3 +1,4 @@
+// Package router provides routing and middleware setup for the application.
 package router
 
 import (
@@ -8,18 +9,32 @@ import (
 	"github.com/aditya/logintest3/server/controllers"
 )
 
+// store is a global session store for managing user sessions.
 var store *session.Store
 
+// SetupRouter configures and returns a Fiber application with all routes and middleware set up.
 func SetupRouter() *fiber.App {
 	app := fiber.New()
 
-	// Middleware
+	// setupMiddleware configures all middleware for the application.
+	setupMiddleware(app)
+
+	// setupRoutes defines all the routes for the application.
+	setupRoutes(app)
+
+	return app
+}
+
+// setupMiddleware configures CORS, static file serving, and session handling middleware.
+func setupMiddleware(app *fiber.App) {
+	// CORS middleware configuration
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
 		AllowMethods: "GET,POST,PUT,DELETE,OPTIONS",
 		AllowHeaders: "Origin,Content-Type,Accept",
 	}))
 
+	// Serve static files
 	app.Static("/", "./media")
 
 	// Initialize session store
@@ -34,8 +49,10 @@ func SetupRouter() *fiber.App {
 		c.Locals("session", sess)
 		return c.Next()
 	})
+}
 
-	// Routes
+// setupRoutes defines all the routes for the application.
+func setupRoutes(app *fiber.App) {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendFile("./media/main.html")
 	})
@@ -51,6 +68,4 @@ func SetupRouter() *fiber.App {
 	app.Get("/reset-password-page", func(c *fiber.Ctx) error {
 		return c.SendFile("./media/reset_password.html")
 	})
-
-	return app
 }

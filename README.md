@@ -12,7 +12,7 @@ This project is a simple login system built with Go and the Fiber web framework.
 
 1. Clone the repository:
    ```
-   git clone https://github.com/arnoldadi/logintest.git
+   git clone https://github.com/yourusername/logintest.git
    cd logintest
    ```
 
@@ -42,10 +42,10 @@ This project is a simple login system built with Go and the Fiber web framework.
 
 ## Database Setup
 
-Run the following SQL commands to create the necessary table:
+Run the following SQL command to create the necessary table:
 
 ```sql
-CREATE TABLE users (
+CREATE TABLE login_credentials (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -66,12 +66,12 @@ CREATE TABLE users (
 
 ## API Endpoints
 
-- `GET /users`: Get all users (protected route)
 - `POST /register`: Register a new user
 - `POST /login`: Log in a user
 - `POST /logout`: Log out a user
-- `POST /reset-password`: Reset user password
+- `GET /users`: Get all users (protected route)
 - `DELETE /users/:id`: Delete a user (protected route)
+- `POST /reset-password`: Reset user password
 
 ## Frontend
 

@@ -1,3 +1,4 @@
+// Package controllers provides HTTP request handlers for user management.
 package controllers
 
 import (
@@ -12,6 +13,7 @@ import (
 	"github.com/aditya/logintest3/database"
 )
 
+// User represents a user in the system.
 type User struct {
 	ID        int       `json:"id"`
 	Username  string    `json:"username"`
@@ -21,8 +23,8 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-
-
+// RegisterUser handles the registration of a new user.
+// It expects a JSON payload with username, email, and password.
 func RegisterUser(c *fiber.Ctx) error {
 	var user User
 	if err := c.BodyParser(&user); err != nil {
@@ -77,7 +79,8 @@ func RegisterUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "User created successfully"})
 }
 
-
+// LoginUser handles user authentication.
+// It expects a JSON payload with email and password.
 func LoginUser(c *fiber.Ctx) error {
 	var loginData struct {
 		Email    string `json:"email"`
@@ -117,10 +120,10 @@ func LoginUser(c *fiber.Ctx) error {
 	}
 
 	user.Password = "" // Remove password from response
-	return c.JSON(fiber.Map{"message": "Login successful", "user": user})}
+	return c.JSON(fiber.Map{"message": "Login successful", "user": user})
+}
 
-
-
+// LogoutUser handles user logout by destroying the session.
 func LogoutUser(c *fiber.Ctx) error {
 	sess, ok := c.Locals("session").(*session.Session)
 	if !ok {
@@ -130,10 +133,11 @@ func LogoutUser(c *fiber.Ctx) error {
 	if err := sess.Destroy(); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to destroy session"})
 	}
-	return c.JSON(fiber.Map{"message": "Logout successful"})}
+	return c.JSON(fiber.Map{"message": "Logout successful"})
+}
 
-
-
+// GetAllUsers retrieves all users from the database.
+// This is a protected route that requires authentication.
 func GetAllUsers(c *fiber.Ctx) error {
 	rows, err := database.DB.Query("SELECT id, username, email, created_at, updated_at FROM login_credentials")
 	if err != nil {
@@ -155,7 +159,8 @@ func GetAllUsers(c *fiber.Ctx) error {
 	return c.JSON(users)
 }
 
-
+// DeleteUser removes a user from the database by their ID.
+// This is a protected route that requires authentication.
 func DeleteUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -173,8 +178,8 @@ func DeleteUser(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"message": "User deleted successfully"})
 }
 
-
-
+// ResetPassword handles password reset requests.
+// It expects a JSON payload with email and new password.
 func ResetPassword(c *fiber.Ctx) error {
 	email := c.FormValue("email")
 	newPassword := c.FormValue("new_password")
