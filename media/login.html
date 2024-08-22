@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Planto.ai</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        nav { background-color: #4CAF50; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+        nav h1 { color: white; margin: 0; }
+        nav a { color: white; text-decoration: none; }
+        .welcome { text-align: center; margin-top: 50px; font-size: 2em; }
+        form { max-width: 300px; margin: 40px auto; }
+        input { width: 100%; padding: 10px; margin: 10px 0; }
+        button { width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        #message { text-align: center; color: red; }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>Planto.ai</h1>
+        <div>
+            <a href="main.html">Home</a>
+            <a href="register.html" style="margin-left: 10px;">Create Account</a>
+        </div>
+    </nav>
+    <div class="welcome" id="welcome-message">Welcome, user!</div>
+    <form id="loginForm">
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+    <p id="message"></p>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = 'main.html';
+                } else {
+                    document.getElementById('message').textContent = data.error || 'An error occurred. Please try again.';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('message').textContent = 'An error occurred. Please try again.';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planto.ai</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        nav { background-color: #4CAF50; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+        nav h1 { color: white; margin: 0; }
+        nav a { color: white; text-decoration: none; }
+        .welcome { text-align: center; margin-top: 50px; font-size: 2em; }
+        .user-profile {
+            position: relative;
+        }
+
+        .profile-panel {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .user-profile:hover .profile-panel {
+            display: block;
+        }
+
+        .profile-pic-container {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .nav-bar {
+            background-color: #333;
+            padding: 10px;
+            text-align: right;
+        }
+        .nav-bar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/reset-password-page">Reset Password</a>
+    </div>
+    <nav>
+        <h1>Planto.ai</h1>
+        <div id="user-profile" class="user-profile">
+            <span id="username"></span>
+            <div class="profile-panel">
+                <div class="profile-pic-container">
+                    <img src="profile-pic.png" alt="Profile Picture" class="profile-pic">
+                </div>
+                <span id="full-name"></span>
+                <button id="logout-btn">Logout</button>
+            </div>
+        </div>
+    </nav>
+    <div class="welcome" id="welcome-message">
+        <!-- This will be populated by JavaScript -->
+    </div>
+
+    <script>
+        const userProfile = document.getElementById('user-profile');
+        const username = document.getElementById('username');
+        const fullName = document.getElementById('full-name');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const logoutBtn = document.getElementById('logout-btn');
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        if (user && user.username) {
+            username.textContent = user.username;
+            fullName.textContent = user.username; // Assuming full name is not stored separately
+            welcomeMessage.textContent = `Welcome, ${user.username}!`;
+            userProfile.style.display = 'block';
+        } else {
+            userProfile.innerHTML = '<a href="login.html">Login</a>';
+            welcomeMessage.textContent = 'Welcome, user!';
+        }
+
+        logoutBtn.addEventListener('click', function() {
+            fetch('http://localhost:3000/logout', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === "Logout successful") {
+                    localStorage.removeItem('user');
+                    window.location.href = 'login.html';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
